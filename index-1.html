@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>치팡 — 치과 재료 자동 최적 주문 시스템</title>
+  <meta name="description" content="배송비 낭비, 반복 주문 이제 끝내세요. 치팡이 자동으로 최적 주문을 대신합니다." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700;900&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #f7f4ef; --surface: #ffffff; --ink: #1a1714; --ink-soft: #5a5450;
+      --gold: #b8973a; --gold-light: #e8d49a; --gold-dark: #8a6e22;
+      --accent: #c23b2a; --border: #e4ddd4; --radius: 16px;
+      --serif: 'Noto Serif KR', Georgia, serif; --sans: 'Noto Sans KR', sans-serif;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--sans); background: var(--bg); color: var(--ink); line-height: 1.6; overflow-x: hidden; }
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 48px;
+      background: rgba(247,244,239,0.92); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo { font-family: var(--serif); font-weight: 900; font-size: 22px; color: var(--ink); letter-spacing: -0.5px; }
+    .nav-logo span { color: var(--gold); }
+    .nav-cta {
+      background: var(--ink); color: #fff; font-family: var(--sans); font-weight: 700; font-size: 14px;
+      padding: 10px 24px; border-radius: 100px; border: none; cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .nav-cta:hover { background: var(--gold-dark); transform: translateY(-1px); }
+    section { padding: 100px 48px; }
+    .container { max-width: 1080px; margin: 0 auto; }
+    .tag {
+      display: inline-block; font-size: 12px; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--gold-dark); background: var(--gold-light);
+      padding: 4px 12px; border-radius: 100px; margin-bottom: 20px;
+    }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--gold); color: #fff; font-family: var(--sans); font-weight: 700; font-size: 17px;
+      padding: 18px 40px; border-radius: 100px; border: none; cursor: pointer;
+      transition: all 0.2s; box-shadow: 0 4px 24px rgba(184,151,58,0.35);
+    }
+    .btn-primary:hover { background: var(--gold-dark); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(184,151,58,0.45); }
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: transparent; color: var(--ink); font-family: var(--sans); font-weight: 600; font-size: 16px;
+      padding: 16px 32px; border-radius: 100px; border: 1.5px solid var(--border); cursor: pointer; transition: all 0.2s;
+    }
+    .btn-secondary:hover { border-color: var(--gold); color: var(--gold-dark); background: rgba(184,151,58,0.06); }
+
+    /* HERO */
+    #hero { min-height: 100vh; display: flex; align-items: center; padding-top: 120px; padding-bottom: 80px; position: relative; overflow: hidden; }
+    #hero::before { content: ''; position: absolute; top: -200px; right: -300px; width: 700px; height: 700px; background: radial-gradient(circle, rgba(184,151,58,0.12) 0%, transparent 70%); pointer-events: none; }
+    #hero::after { content: ''; position: absolute; bottom: -100px; left: -200px; width: 500px; height: 500px; background: radial-gradient(circle, rgba(194,59,42,0.06) 0%, transparent 70%); pointer-events: none; }
+    .hero-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+    .hero-eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--gold-dark); margin-bottom: 24px; letter-spacing: 0.06em; }
+    .hero-eyebrow::before { content: ''; display: inline-block; width: 32px; height: 2px; background: var(--gold); }
+    .hero-h1 { font-family: var(--serif); font-size: clamp(32px, 4.5vw, 52px); font-weight: 900; line-height: 1.25; letter-spacing: -1px; color: var(--ink); margin-bottom: 20px; }
+    .hero-h1 em { font-style: normal; color: var(--gold); }
+    .hero-sub { font-size: 18px; color: var(--ink-soft); line-height: 1.7; margin-bottom: 40px; }
+    .hero-cta-group { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .hero-stat-row { display: flex; gap: 32px; margin-top: 48px; padding-top: 32px; border-top: 1px solid var(--border); }
+    .hero-stat strong { display: block; font-family: var(--serif); font-size: 28px; font-weight: 900; color: var(--ink); }
+    .hero-stat span { font-size: 13px; color: var(--ink-soft); }
+    .hero-card { background: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 32px; box-shadow: 0 8px 48px rgba(26,23,20,0.08); position: relative; }
+    .hero-card-label { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 16px; }
+    .order-preview { display: flex; flex-direction: column; gap: 10px; }
+    .order-item { display: flex; align-items: center; justify-content: space-between; background: var(--bg); border-radius: 12px; padding: 12px 16px; }
+    .order-item-left { display: flex; align-items: center; gap: 10px; }
+    .order-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); flex-shrink: 0; }
+    .order-item-name { font-size: 13px; font-weight: 600; color: var(--ink); }
+    .order-item-qty { font-size: 12px; color: var(--ink-soft); }
+    .order-badge { font-size: 11px; font-weight: 700; background: #e8f5e9; color: #2e7d32; padding: 3px 8px; border-radius: 6px; }
+    .order-total-row { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
+    .order-total-label { font-size: 13px; color: var(--ink-soft); }
+    .order-total-val { font-family: var(--serif); font-size: 20px; font-weight: 900; color: var(--ink); }
+    .order-btn {
+      display: block; text-align: center; width: 100%;
+      background: var(--ink); color: #fff; font-weight: 700; font-size: 14px;
+      padding: 14px; border-radius: 12px; border: none; cursor: pointer;
+      margin-top: 16px; font-family: var(--sans); transition: background 0.2s;
+    }
+    .order-btn:hover { background: var(--gold-dark); }
+    .saving-badge { position: absolute; top: -12px; right: 24px; background: var(--accent); color: #fff; font-size: 12px; font-weight: 700; padding: 6px 14px; border-radius: 100px; }
+
+    /* PROBLEM */
+    #problem { background: var(--ink); color: #fff; }
+    #problem .tag { color: var(--gold-light); background: rgba(232,212,154,0.15); }
+    .problem-h2 { font-family: var(--serif); font-size: clamp(28px, 3.5vw, 44px); font-weight: 900; line-height: 1.3; margin-bottom: 16px; color: #fff; }
+    .problem-sub { font-size: 17px; color: rgba(255,255,255,0.6); margin-bottom: 56px; }
+    .pain-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .pain-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: var(--radius); padding: 28px; transition: border-color 0.2s; }
+    .pain-card:hover { border-color: rgba(184,151,58,0.4); }
+    .pain-icon { font-size: 32px; margin-bottom: 16px; display: block; }
+    .pain-title { font-family: var(--serif); font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+    .pain-desc { font-size: 14px; color: rgba(255,255,255,0.55); line-height: 1.6; }
+
+    /* SOLUTION */
+    #solution { background: var(--bg); }
+    .section-h2 { font-family: var(--serif); font-size: clamp(26px, 3.2vw, 42px); font-weight: 900; line-height: 1.3; margin-bottom: 12px; letter-spacing: -0.5px; }
+    .section-sub { font-size: 17px; color: var(--ink-soft); margin-bottom: 56px; }
+    .solution-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .sol-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px; transition: box-shadow 0.2s, transform 0.2s; }
+    .sol-card:hover { box-shadow: 0 8px 32px rgba(26,23,20,0.08); transform: translateY(-3px); }
+    .sol-number { font-family: var(--serif); font-size: 48px; font-weight: 900; color: var(--gold-light); line-height: 1; margin-bottom: 12px; }
+    .sol-title { font-family: var(--serif); font-size: 20px; font-weight: 700; margin-bottom: 10px; }
+    .sol-desc { font-size: 14px; color: var(--ink-soft); line-height: 1.7; }
+
+    /* COMPARE */
+    #compare { background: #fff; }
+    .compare-table { width: 100%; border-collapse: separate; border-spacing: 0; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 32px rgba(26,23,20,0.06); }
+    .compare-table th { padding: 20px 28px; font-size: 15px; font-weight: 700; text-align: left; }
+    .compare-table th:first-child { background: #f5f5f5; color: var(--ink-soft); width: 36%; }
+    .compare-table th:nth-child(2) { background: #f5f5f5; color: var(--ink-soft); text-align: center; width: 32%; }
+    .compare-table th:last-child { background: var(--gold); color: #fff; text-align: center; width: 32%; }
+    .compare-table td { padding: 18px 28px; font-size: 14px; border-top: 1px solid #f0f0f0; }
+    .compare-table td:first-child { font-weight: 600; color: var(--ink); }
+    .compare-table td:nth-child(2) { text-align: center; color: var(--ink-soft); background: #fafafa; }
+    .compare-table td:last-child { text-align: center; background: rgba(184,151,58,0.04); font-weight: 600; color: var(--gold-dark); }
+    .x-mark { color: #e53e3e; font-size: 18px; }
+    .o-mark { color: #38a169; font-size: 18px; font-weight: 700; }
+
+    /* FLOW */
+    #flow { background: var(--bg); }
+    .flow-steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; position: relative; }
+    .flow-steps::before { content: ''; position: absolute; top: 40px; left: calc(12.5%); right: calc(12.5%); height: 2px; background: linear-gradient(to right, var(--gold-light), var(--gold), var(--gold-light)); }
+    .flow-step { text-align: center; padding: 0 16px; }
+    .flow-num { width: 80px; height: 80px; border-radius: 50%; background: var(--surface); border: 3px solid var(--gold); display: flex; align-items: center; justify-content: center; font-family: var(--serif); font-size: 28px; font-weight: 900; color: var(--gold-dark); margin: 0 auto 20px; position: relative; z-index: 1; box-shadow: 0 4px 16px rgba(184,151,58,0.2); }
+    .flow-title { font-family: var(--serif); font-size: 17px; font-weight: 700; margin-bottom: 8px; }
+    .flow-desc { font-size: 13px; color: var(--ink-soft); line-height: 1.6; }
+
+    /* TRUST */
+    #trust { background: var(--surface); }
+    .trust-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-bottom: 64px; }
+    .trust-stat { text-align: center; padding: 32px 16px; background: var(--bg); border-radius: var(--radius); }
+    .trust-stat-num { font-family: var(--serif); font-size: 40px; font-weight: 900; color: var(--gold-dark); display: block; }
+    .trust-stat-label { font-size: 13px; color: var(--ink-soft); margin-top: 4px; }
+    .review-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .review-card { background: var(--bg); border-radius: var(--radius); padding: 24px; }
+    .review-stars { color: var(--gold); font-size: 16px; margin-bottom: 12px; letter-spacing: 2px; }
+    .review-text { font-size: 14px; line-height: 1.7; color: var(--ink); margin-bottom: 16px; }
+    .review-author { font-size: 13px; font-weight: 700; color: var(--ink-soft); }
+
+    /* CTA */
+    #cta { background: var(--ink); color: #fff; text-align: center; padding: 120px 48px; }
+    .cta-h2 { font-family: var(--serif); font-size: clamp(28px, 4vw, 52px); font-weight: 900; line-height: 1.25; margin-bottom: 16px; color: #fff; }
+    .cta-h2 em { font-style: normal; color: var(--gold); }
+    .cta-sub { font-size: 17px; color: rgba(255,255,255,0.6); margin-bottom: 40px; }
+    .cta-group { display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap; }
+    .cta-note { font-size: 13px; color: rgba(255,255,255,0.4); margin-top: 20px; }
+
+    footer { background: #111; color: rgba(255,255,255,0.4); text-align: center; padding: 32px 48px; font-size: 13px; }
+    footer strong { color: rgba(255,255,255,0.7); }
+
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+    .hero-left > * { animation: fadeUp 0.6s ease both; }
+    .hero-left > *:nth-child(1) { animation-delay: 0.1s; }
+    .hero-left > *:nth-child(2) { animation-delay: 0.2s; }
+    .hero-left > *:nth-child(3) { animation-delay: 0.3s; }
+    .hero-left > *:nth-child(4) { animation-delay: 0.4s; }
+    .hero-left > *:nth-child(5) { animation-delay: 0.5s; }
+    .hero-card { animation: fadeUp 0.7s ease 0.35s both; }
+
+    @media (max-width: 900px) {
+      nav { padding: 14px 20px; }
+      section { padding: 72px 24px; }
+      .hero-inner { grid-template-columns: 1fr; gap: 40px; }
+      .hero-card { order: -1; }
+      .saving-badge { top: -10px; right: 16px; }
+      .pain-grid, .solution-grid, .review-grid { grid-template-columns: 1fr; }
+      .flow-steps { grid-template-columns: 1fr 1fr; gap: 32px; }
+      .flow-steps::before { display: none; }
+      .trust-stats { grid-template-columns: 1fr 1fr; }
+      .compare-table { font-size: 12px; }
+      .compare-table th, .compare-table td { padding: 14px 14px; }
+      #cta { padding: 80px 24px; }
+    }
+    @media (max-width: 560px) {
+      .flow-steps { grid-template-columns: 1fr; }
+      .hero-stat-row { gap: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">치<span>팡</span></div>
+  <button onclick="goToCheepang()" class="nav-cta">지금 시작하기 →</button>
+</nav>
+
+<section id="hero">
+  <div class="container">
+    <div class="hero-inner">
+      <div class="hero-left">
+        <div class="hero-eyebrow">치과 재료 B2B 자동 주문 플랫폼</div>
+        <h1 class="hero-h1">아무 생각 없이<br/>주문해도<br/><em>자동으로 최적 선택</em>이<br/>됩니다</h1>
+        <p class="hero-sub">배송비 낭비, 반복 주문 이제 끝내세요.<br/>치팡이 치과의 재료 주문을 완전히 바꿉니다.</p>
+        <div class="hero-cta-group">
+          <button onclick="goToCheepang()" class="btn-primary">지금 무료로 시작하기 →</button>
+          <button onclick="goToCheepang()" class="btn-secondary">서비스 둘러보기</button>
+        </div>
+        <div class="hero-stat-row">
+          <div class="hero-stat"><strong>200+</strong><span>취급 품목</span></div>
+          <div class="hero-stat"><strong>24h</strong><span>주문~배송</span></div>
+          <div class="hero-stat"><strong>100%</strong><span>사업자 전용 B2B</span></div>
+        </div>
+      </div>
+      <div>
+        <div class="hero-card">
+          <span class="saving-badge">배송비 ₩0 절약!</span>
+          <div class="hero-card-label">이번 주 자동 최적 주문</div>
+          <div class="order-preview">
+            <div class="order-item">
+              <div class="order-item-left"><div class="order-dot"></div><div><div class="order-item-name">Highness Fixture HS-I</div><div class="order-item-qty">×10개 / 1000pkg 단가</div></div></div>
+              <span class="order-badge">최적가</span>
+            </div>
+            <div class="order-item">
+              <div class="order-item-left"><div class="order-dot" style="background:#c23b2a"></div><div><div class="order-item-name">InterOss 0.5g (S)</div><div class="order-item-qty">×5개</div></div></div>
+              <span class="order-badge">재고 최적</span>
+            </div>
+            <div class="order-item">
+              <div class="order-item-left"><div class="order-dot" style="background:#5a5450"></div><div><div class="order-item-name">OCS-B Xenomatrix 0.25g</div><div class="order-item-qty">×3개</div></div></div>
+              <span class="order-badge">묶음배송</span>
+            </div>
+          </div>
+          <div class="order-total-row">
+            <span class="order-total-label">합계 (배송비 포함)</span>
+            <span class="order-total-val">₩487,000</span>
+          </div>
+          <button onclick="goToCheepang()" class="order-btn">🛒 장바구니 한 번에 담기</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="problem">
+  <div class="container">
+    <span class="tag">지금 이런 상황 아닌가요?</span>
+    <h2 class="problem-h2">치과 주문, 아직도<br/>이렇게 하고 계신가요?</h2>
+    <p class="problem-sub">매번 반복되는 불편함, 이제 치팡이 해결합니다.</p>
+    <div class="pain-grid">
+      <div class="pain-card"><span class="pain-icon">📱</span><div class="pain-title">카카오톡으로 주문</div><p class="pain-desc">담당자에게 문자 보내고, 확인 기다리고, 배송 추적도 따로. 하루에 몇 번씩 오가는 메시지.</p></div>
+      <div class="pain-card"><span class="pain-icon">🚚</span><div class="pain-title">소량 주문마다 배송비</div><p class="pain-desc">임플란트 1개 추가 주문에 배송비 ₩4,000. 한 달이면 배송비만 수십만 원이 나갑니다.</p></div>
+      <div class="pain-card"><span class="pain-icon">😰</span><div class="pain-title">재고 파악이 안 됨</div><p class="pain-desc">막상 수술 당일 재료가 없어 당황하거나, 반대로 창고에 쌓이는 재고. 두 경우 모두 손해입니다.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="solution">
+  <div class="container">
+    <span class="tag">치팡의 해결책</span>
+    <h2 class="section-h2">하나의 플랫폼으로<br/>모든 게 해결됩니다</h2>
+    <p class="section-sub">복잡한 주문 과정을 치팡이 대신 최적화합니다.</p>
+    <div class="solution-grid">
+      <div class="sol-card"><div class="sol-number">01</div><div class="sol-title">패키지 단가 자동 적용</div><p class="sol-desc">거래처별 1천~1만 패키지 단가가 로그인하면 자동 적용됩니다. 가격 협상 불필요.</p></div>
+      <div class="sol-card"><div class="sol-number">02</div><div class="sol-title">200+ 품목 원스톱 주문</div><p class="sol-desc">임플란트부터 인공뼈, 멤브레인, 진료기구까지. 한 곳에서 모두 주문하고 한 번에 받으세요.</p></div>
+      <div class="sol-card"><div class="sol-number">03</div><div class="sol-title">규격별 정확한 선택</div><p class="sol-desc">드롭다운 하나로 규격과 용량을 선택하면 가격도 실시간으로 바뀝니다. 실수 없는 주문.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="compare">
+  <div class="container">
+    <span class="tag">기존 vs 치팡</span>
+    <h2 class="section-h2" style="margin-bottom:12px">무엇이 다른가요?</h2>
+    <p class="section-sub">숫자로 확인하세요.</p>
+    <table class="compare-table">
+      <thead><tr><th>항목</th><th>기존 방식</th><th>✦ 치팡</th></tr></thead>
+      <tbody>
+        <tr><td>주문 방법</td><td>전화 / 카카오톡</td><td>온라인 셀프 주문</td></tr>
+        <tr><td>가격 투명성</td><td><span class="x-mark">✗</span> 협상 후 확인</td><td><span class="o-mark">✓</span> 로그인 즉시 확인</td></tr>
+        <tr><td>배송비 관리</td><td><span class="x-mark">✗</span> 매 주문마다 발생</td><td><span class="o-mark">✓</span> 묶음 배송 최적화</td></tr>
+        <tr><td>주문 내역 관리</td><td><span class="x-mark">✗</span> 문자 스크롤 검색</td><td><span class="o-mark">✓</span> 대시보드 자동 기록</td></tr>
+        <tr><td>24시간 주문</td><td><span class="x-mark">✗</span> 담당자 근무시간만</td><td><span class="o-mark">✓</span> 365일 언제든지</td></tr>
+        <tr><td>규격 선택 실수</td><td><span class="x-mark">✗</span> 문자 오타 빈번</td><td><span class="o-mark">✓</span> 드롭다운 정확 선택</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="flow">
+  <div class="container">
+    <span class="tag">이렇게 사용하세요</span>
+    <h2 class="section-h2" style="margin-bottom:12px">딱 4단계면 끝납니다</h2>
+    <p class="section-sub" style="margin-bottom:64px">복잡한 설명 없이 바로 주문하세요.</p>
+    <div class="flow-steps">
+      <div class="flow-step"><div class="flow-num">1</div><div class="flow-title">사업자번호로 로그인</div><p class="flow-desc">별도 가입 절차 없이 사업자번호 + 비밀번호로 즉시 접속</p></div>
+      <div class="flow-step"><div class="flow-num">2</div><div class="flow-title">제품 선택</div><p class="flow-desc">카테고리에서 원하는 제품과 규격을 드롭다운으로 선택</p></div>
+      <div class="flow-step"><div class="flow-num">3</div><div class="flow-title">장바구니 담기</div><p class="flow-desc">패키지 단가 자동 적용된 가격 확인 후 장바구니에 추가</p></div>
+      <div class="flow-step"><div class="flow-num">4</div><div class="flow-title">주문 완료</div><p class="flow-desc">주문 확정 후 24시간 내 배송 시작. 내역은 대시보드에 자동 기록</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="trust">
+  <div class="container">
+    <span class="tag">신뢰할 수 있는 이유</span>
+    <h2 class="section-h2" style="margin-bottom:48px">수치가 증명합니다</h2>
+    <div class="trust-stats">
+      <div class="trust-stat"><span class="trust-stat-num">200+</span><div class="trust-stat-label">취급 품목 수</div></div>
+      <div class="trust-stat"><span class="trust-stat-num">24h</span><div class="trust-stat-label">평균 배송 시간</div></div>
+      <div class="trust-stat"><span class="trust-stat-num">B2B</span><div class="trust-stat-label">치과 전용 플랫폼</div></div>
+      <div class="trust-stat"><span class="trust-stat-num">100%</span><div class="trust-stat-label">공식 정품 유통</div></div>
+    </div>
+    <div class="review-grid">
+      <div class="review-card"><div class="review-stars">★★★★★</div><p class="review-text">"카카오톡으로 주문하다가 규격 실수한 적이 몇 번 있었는데, 치팡으로 바꾸고 나서 단 한 번도 없었습니다. 드롭다운 선택이라 실수가 불가능하더라고요."</p><div class="review-author">— 청주 A치과, 원장</div></div>
+      <div class="review-card"><div class="review-stars">★★★★★</div><p class="review-text">"소량 주문할 때마다 배송비가 아까웠는데, 이제 묶음으로 한 번에 시키니까 훨씬 경제적입니다. 스텝들도 직접 주문할 수 있어서 편하다고 해요."</p><div class="review-author">— 천안 B치과, 치위생사</div></div>
+      <div class="review-card"><div class="review-stars">★★★★★</div><p class="review-text">"밤 11시에 재료 확인하고 바로 주문 넣을 수 있는 게 정말 좋습니다. 다음날 담당자 연락 기다릴 필요가 없어요. 빠른 배송도 만족스럽습니다."</p><div class="review-author">— 대전 C치과, 원장</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="cta">
+  <div class="container">
+    <h2 class="cta-h2">지금 바로 시작하면<br/><em>첫 주문부터 최적가</em>입니다</h2>
+    <p class="cta-sub">별도 계약 없이 사업자번호로 즉시 접속 가능합니다</p>
+    <div class="cta-group">
+      <button onclick="goToCheepang()" class="btn-primary">치팡 시작하기 →</button>
+      <button onclick="goToCheepang()" class="btn-secondary" style="border-color:rgba(255,255,255,0.2);color:#fff">제품 둘러보기</button>
+    </div>
+    <p class="cta-note">사업자 전용 B2B 플랫폼 · 의료기관 및 자격 보유 사업자 대상</p>
+  </div>
+</section>
+
+<footer>
+  <strong>(주)하이니스중부지사 — 치팡</strong><br/>
+  충남 천안시 서북구 백석동 881 백석종합상가 410호 · 사무실: 1522-4936<br/>
+  <a href="mailto:dentalmain1@naver.com" style="color:rgba(255,255,255,0.5);">dentalmain1@naver.com</a> · 평일 09:00~18:00 / 토요일 09:00~13:00<br/><br/>
+  © 2026 Cheepang. All rights reserved.
+</footer>
+
+<script>
+  /* 치팡 앱 주소 — 도메인 바뀌면 이 한 줄만 수정 */
+  function goToCheepang() {
+    window.location.href = "https://cheepang.readdy.co/";
+  }
+</script>
+
+</body>
+</html>
